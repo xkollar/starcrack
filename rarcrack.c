@@ -78,7 +78,7 @@ inline void savestatus() {
 
 inline int abcnumb(char a) {
   int i;
-  for (i = 0; i<ABCLEN; i++) 
+  for (i = 0; i<ABCLEN; i++)
     if (ABC[i] == a) return i;
   return 0;
 }
@@ -104,13 +104,13 @@ int loadstatus() {
 		for (node = root->children; node; node = node->next) {
 			if (xmlStrcmp(node->name, "abc") == 0) {
 				if (node->children && (strlen(node->children->content) > 0)) {
-					ABC = xmlStringDecodeEntities(parserctxt, 
+					ABC = xmlStringDecodeEntities(parserctxt,
 						node->children->content,XML_SUBSTITUTE_BOTH,0,0,0);
 				} else
 					ret = 1;
 			} else if (xmlStrcmp(node->name, "current") == 0) {
 				if (node->children && (strlen(node->children->content) > 0)) {
-					tmp = xmlStringDecodeEntities(parserctxt, 
+					tmp = xmlStringDecodeEntities(parserctxt,
 						node->children->content,XML_SUBSTITUTE_BOTH,0,0,0);
 					strcpy(password,tmp);
 					curr_len = strlen(password);
@@ -120,7 +120,7 @@ int loadstatus() {
 					ret = 1;
 			} else if (xmlStrcmp(node->name, "good_password") == 0) {
 				if (node->children && (strlen(node->children->content) > 0)) {
-					tmp = xmlStringDecodeEntities(parserctxt, 
+					tmp = xmlStringDecodeEntities(parserctxt,
 						node->children->content,XML_SUBSTITUTE_BOTH,0,0,0);
 					strcpy(password,tmp);
 					curr_len = strlen(password);
@@ -140,7 +140,7 @@ int loadstatus() {
 		root = xmlNewNode(NULL, "rarcrack");
 		xmlDocSetRootElement(status, root);
 		node = xmlNewTextChild(root, NULL, "abc", ABC);
-		node = xmlNewTextChild(root, NULL, "current", getfirstpassword()); 
+		node = xmlNewTextChild(root, NULL, "current", getfirstpassword());
 		node = xmlNewTextChild(root, NULL, "good_password", "");
 		savestatus();
 	}
@@ -159,8 +159,8 @@ void nextpass2(char* p, unsigned int n) {
 		p[0]=ABC[0];
 		p[++curr_len]='\0';
 	   }
-	  	
-   } else 
+
+   } else
 	   p[n] = ABC[abcnumb(p[n])+1];
    return;
 }
@@ -265,7 +265,7 @@ void init(int argc, char **argv) {
 				printf("Info:    This program supports only RAR, ZIP and 7Z encrypted archives.\n");
 				printf("         RarCrack! usually detects the archive type.\n\n");
 				help = 1;
-				break;	
+				break;
 			} else if (strcmp(argv[i],"--threads") == 0) {
 				if ((i + 1) < argc) {
 					sscanf(argv[++i], "%d", &threads);
@@ -350,7 +350,7 @@ int main(int argc, char *argv[]) {
 	  xmlFree(ABC);
   if (status)
 	  xmlFreeDoc(status);
-  xmlFreeMutex(pwdMutex); 
+  xmlFreeMutex(pwdMutex);
   xmlFreeMutex(finishedMutex);
   return EXIT_SUCCESS;
 }
