@@ -23,7 +23,7 @@
 char* ABC = (char*) &default_ABC;
 int ABCLEN;
 
-char password[PWD_LEN+1] = {'\0','\0'}; //this contains the actual password
+char password[PWD_LEN+1] = {'\0', '\0'}; //this contains the actual password
 char password_good[PWD_LEN+1] = {'\0', '\0'};  //this changed only once, when we found the good passord
 unsigned int curr_len = 1; //current password length
 long counter = 0;	//this couning probed passwords
@@ -63,7 +63,7 @@ inline void savestatus() {
 						}
 					}
 					xmlFree(tmp);
-				} else if ((finished == 1) && (xmlStrcmp(node->name,"good_password") == 0)) {
+				} else if ((finished == 1) && (xmlStrcmp(node->name, "good_password") == 0)) {
 					tmp =  xmlEncodeEntitiesReentrant(status, (const xmlChar*) &password_good);
 					if (node->children) {
 						xmlNodeSetContent(node->children, tmp);
@@ -111,17 +111,17 @@ int loadstatus() {
 			if (xmlStrcmp(node->name, "abc") == 0) {
 				if (node->children && (strlen(node->children->content) > 0)) {
 					ABC = xmlStringDecodeEntities(parserctxt,
-						node->children->content,XML_SUBSTITUTE_BOTH,0,0,0);
+						node->children->content, XML_SUBSTITUTE_BOTH, 0, 0, 0);
 				} else {
 					ret = 1;
 				}
 			} else if (xmlStrcmp(node->name, "current") == 0) {
 				if (node->children && (strlen(node->children->content) > 0)) {
 					tmp = xmlStringDecodeEntities(parserctxt,
-						node->children->content,XML_SUBSTITUTE_BOTH,0,0,0);
-					strcpy(password,tmp);
+						node->children->content, XML_SUBSTITUTE_BOTH, 0, 0, 0);
+					strcpy(password, tmp);
 					curr_len = strlen(password);
-					printf("INFO: Resuming cracking from password: '%s'\n",password);
+					printf("INFO: Resuming cracking from password: '%s'\n", password);
 					xmlFree(tmp);
 				} else {
 					ret = 1;
@@ -129,8 +129,8 @@ int loadstatus() {
 			} else if (xmlStrcmp(node->name, "good_password") == 0) {
 				if (node->children && (strlen(node->children->content) > 0)) {
 					tmp = xmlStringDecodeEntities(parserctxt,
-						node->children->content,XML_SUBSTITUTE_BOTH,0,0,0);
-					strcpy(password,tmp);
+						node->children->content, XML_SUBSTITUTE_BOTH, 0, 0, 0);
+					strcpy(password, tmp);
 					curr_len = strlen(password);
 					xmlMutexLock(finishedMutex);
 					finished = 1;
@@ -265,7 +265,7 @@ void init(int argc, char **argv) {
 		help = 1;
 	} else {
 		for (i = 1; i < argc; i++) {
-			if (strcmp(argv[i],"--help") == 0) {
+			if (strcmp(argv[i], "--help") == 0) {
 				printf("Usage:   rarcrack encrypted_archive.ext [--threads NUM] [--type rar|zip|7z]\n\n");
 				printf("Options: --help: show this screen.\n");
 				printf("         --type: you can specify the archive program, this needed when\n");
@@ -276,7 +276,7 @@ void init(int argc, char **argv) {
 				printf("         RarCrack! usually detects the archive type.\n\n");
 				help = 1;
 				break;
-			} else if (strcmp(argv[i],"--threads") == 0) {
+			} else if (strcmp(argv[i], "--threads") == 0) {
 				if ((i + 1) < argc) {
 					sscanf(argv[++i], "%d", &threads);
 					if (threads < 1) {
@@ -290,7 +290,7 @@ void init(int argc, char **argv) {
 					printf("ERROR: missing parameter for option: --threads!\n");
 					help = 1;
 				}
-			} else if (strcmp(argv[i],"--type") == 0) {
+			} else if (strcmp(argv[i], "--type") == 0) {
 				if ((i + 1) < argc) {
 					sscanf(argv[++i], "%s", &test);
 					for (j = 0; strcmp(TYPE[j], "") != 0; j++) {
@@ -316,8 +316,8 @@ void init(int argc, char **argv) {
 	if (help == 1) {
 		return;
 	}
-	sprintf((char*)&statname,"%s.xml",(char*)&filename);
-	totest = fopen(filename,"r");
+	sprintf((char*)&statname, "%s.xml", (char*)&filename);
+	totest = fopen(filename, "r");
 	if (totest == NULL) {
 		printf("ERROR: The specified file (%s) is not exists or \n", filename);
 		printf("       you don't have a right permissions!\n");
@@ -328,12 +328,12 @@ void init(int argc, char **argv) {
 	if (finalcmd[0] == '\0') {
 		//when we specify the file type, the programm will skip the test
 		sprintf((char*)&test, CMD_DETECT, filename);
-		totest = popen(test,"r");
-		fscanf(totest,"%s",(char*)&test);
+		totest = popen(test, "r");
+		fscanf(totest, "%s", (char*)&test);
 		pclose(totest);
-		for (i = 0; strcmp(MIME[i],"") != 0; i++) {
-			if (strcmp(MIME[i],test) == 0) {
-				strcpy(finalcmd,CMD[i]);
+		for (i = 0; strcmp(MIME[i], "") != 0; i++) {
+			if (strcmp(MIME[i], test) == 0) {
+				strcpy(finalcmd, CMD[i]);
 				archive_type = i;
 				break;
 			}
@@ -362,7 +362,7 @@ void init(int argc, char **argv) {
 
 int main(int argc, char *argv[]) {
 	printf("RarCrack! 0.2 by David Zoltan Kedves (kedazo@gmail.com)\n\n");
-	init(argc,argv);
+	init(argc, argv);
 	if (ABC != (char*) &default_ABC) {
 		xmlFree(ABC);
 	}
