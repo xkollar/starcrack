@@ -213,7 +213,7 @@ void * crack_thread() {
 		Pipe = popen(cmd, "r");
 		while (!feof(Pipe)) {
 			fgets((char*)&ret, 200, Pipe);
-			if (strcasestr(ret, "ok") != NULL) {
+			if (strcasestr(ret, "ok") != 0) {
 				strcpy(password_good, current);
 				xmlMutexLock(finishedMutex);
 				finished = 1;
