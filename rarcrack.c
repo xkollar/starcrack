@@ -56,11 +56,11 @@ inline void savestatus() {
 					tmp = xmlEncodeEntitiesReentrant(status, (const xmlChar*) &password);
 					xmlMutexUnlock(pwdMutex);
 					if (node->children) {
-					    if (password[0] == '\0')
-						xmlNodeSetContent(node->children, getfirstpassword());
-					    else
-						xmlNodeSetContent(node->children, tmp);
-					    }
+						if (password[0] == '\0')
+							xmlNodeSetContent(node->children, getfirstpassword());
+						else
+							xmlNodeSetContent(node->children, tmp);
+					}
 					xmlFree(tmp);
 				} else if ((finished == 1) && (xmlStrcmp(node->name,"good_password") == 0)) {
 					tmp =  xmlEncodeEntitiesReentrant(status, (const xmlChar*) &password_good);
@@ -77,10 +77,10 @@ inline void savestatus() {
 }
 
 inline int abcnumb(char a) {
-  int i;
-  for (i = 0; i<ABCLEN; i++)
-    if (ABC[i] == a) return i;
-  return 0;
+	int i;
+	for (i = 0; i<ABCLEN; i++)
+		if (ABC[i] == a) return i;
+	return 0;
 }
 
 int loadstatus() {
@@ -148,30 +148,29 @@ int loadstatus() {
 }
 
 void nextpass2(char* p, unsigned int n) {
-   int i;
-   if (p[n] == ABC[ABCLEN-1]) {
-	   p[n] = ABC[0];
-	   if (n>0)
-	   	nextpass2(p, n-1);
-	   else {
-		for (i=curr_len; i>=0; i--)
-			p[i+1]=p[i];
-		p[0]=ABC[0];
-		p[++curr_len]='\0';
-	   }
-
-   } else
-	   p[n] = ABC[abcnumb(p[n])+1];
-   return;
+	int i;
+	if (p[n] == ABC[ABCLEN-1]) {
+		p[n] = ABC[0];
+		if (n>0)
+			nextpass2(p, n-1);
+		else {
+			for (i=curr_len; i>=0; i--)
+				p[i+1]=p[i];
+			p[0]=ABC[0];
+			p[++curr_len]='\0';
+		}
+	} else
+		p[n] = ABC[abcnumb(p[n])+1];
+	return;
 }
 
 inline char* nextpass() {	//IMPORTANT: the returned string must be freed
-   char *ok = malloc(sizeof(char)*(PWD_LEN+1));
-   xmlMutexLock(pwdMutex);
-   strcpy(ok, password);
-   nextpass2((char*) &password, curr_len - 1);
-   xmlMutexUnlock(pwdMutex);
-   return ok;
+	char *ok = malloc(sizeof(char)*(PWD_LEN+1));
+	xmlMutexLock(pwdMutex);
+	strcpy(ok, password);
+	nextpass2((char*) &password, curr_len - 1);
+	xmlMutexUnlock(pwdMutex);
+	return ok;
 }
 
 void * status_thread() {
@@ -202,16 +201,16 @@ void * crack_thread() {
 		sprintf((char*)&cmd, finalcmd, current, filename);
 		Pipe = popen(cmd, "r");
 		while (!feof(Pipe)) {
-		   fgets((char*)&ret, 200, Pipe);
-		   if (strcasestr(ret, "ok") != NULL) {
-			strcpy(password_good, current);
-			xmlMutexLock(finishedMutex);
-			finished = 1;
-			printf("GOOD: password cracked: '%s'\n", current);
-			xmlMutexUnlock(finishedMutex);
-			savestatus();
-			break;
-		   }
+			fgets((char*)&ret, 200, Pipe);
+			if (strcasestr(ret, "ok") != NULL) {
+				strcpy(password_good, current);
+				xmlMutexLock(finishedMutex);
+				finished = 1;
+				printf("GOOD: password cracked: '%s'\n", current);
+				xmlMutexUnlock(finishedMutex);
+				savestatus();
+				break;
+			}
 		}
 		pclose(Pipe);
 		xmlMutexLock(finishedMutex);
@@ -344,14 +343,13 @@ void init(int argc, char **argv) {
 }
 
 int main(int argc, char *argv[]) {
-  printf("RarCrack! 0.2 by David Zoltan Kedves (kedazo@gmail.com)\n\n");
-  init(argc,argv);
-  if (ABC != (char*) &default_ABC)
-	  xmlFree(ABC);
-  if (status)
-	  xmlFreeDoc(status);
-  xmlFreeMutex(pwdMutex);
-  xmlFreeMutex(finishedMutex);
-  return EXIT_SUCCESS;
+	printf("RarCrack! 0.2 by David Zoltan Kedves (kedazo@gmail.com)\n\n");
+	init(argc,argv);
+	if (ABC != (char*) &default_ABC)
+		xmlFree(ABC);
+	if (status)
+		xmlFreeDoc(status);
+	xmlFreeMutex(pwdMutex);
+	xmlFreeMutex(finishedMutex);
+	return EXIT_SUCCESS;
 }
-
