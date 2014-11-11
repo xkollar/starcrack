@@ -252,7 +252,7 @@ void crack_start(unsigned int threads) {
 }
 
 void init(int argc, char **argv) {
-	unsigned int i, j;
+	int i, j;
 	int help = 0;
 	int threads = 2;
 	int archive_type = -1;
