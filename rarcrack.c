@@ -51,19 +51,19 @@ inline void savestatus() {
 		if (root) {
 			xmlMutexLock(finishedMutex);
 			for (node = root->children; node; node = node->next) {
-				if (xmlStrcmp(node->name, "current") == 0) {
+				if (xmlStrcmp(node->name, (const xmlChar*) "current") == 0) {
 					xmlMutexLock(pwdMutex);
 					tmp = xmlEncodeEntitiesReentrant(status, (const xmlChar*) &password);
 					xmlMutexUnlock(pwdMutex);
 					if (node->children) {
 						if (password[0] == '\0') {
-							xmlNodeSetContent(node->children, getfirstpassword());
+							xmlNodeSetContent(node->children, (const xmlChar*) getfirstpassword());
 						} else {
 							xmlNodeSetContent(node->children, tmp);
 						}
 					}
 					xmlFree(tmp);
-				} else if ((finished == 1) && (xmlStrcmp(node->name, "good_password") == 0)) {
+				} else if ((finished == 1) && (xmlStrcmp(node->name, (const xmlChar*) "good_password") == 0)) {
 					tmp =  xmlEncodeEntitiesReentrant(status, (const xmlChar*) &password_good);
 					if (node->children) {
 						xmlNodeSetContent(node->children, tmp);
@@ -93,7 +93,7 @@ int loadstatus() {
 	xmlNodePtr node = NULL;
 	xmlParserCtxtPtr parserctxt;
 	int ret = 0;
-	char* tmp;
+	xmlChar* tmp;
 	FILE* totest;
 	totest = fopen(statname, "r");
 	if (totest != NULL) {
@@ -108,29 +108,29 @@ int loadstatus() {
 	if (root != NULL) {
 		parserctxt = xmlNewParserCtxt();
 		for (node = root->children; node; node = node->next) {
-			if (xmlStrcmp(node->name, "abc") == 0) {
-				if (node->children && (strlen(node->children->content) > 0)) {
-					ABC = xmlStringDecodeEntities(parserctxt,
+			if (xmlStrcmp(node->name, (const xmlChar*) "abc") == 0) {
+				if (node->children && (strlen((const char*) node->children->content) > 0)) {
+					ABC = (char*) xmlStringDecodeEntities(parserctxt,
 						node->children->content, XML_SUBSTITUTE_BOTH, 0, 0, 0);
 				} else {
 					ret = 1;
 				}
-			} else if (xmlStrcmp(node->name, "current") == 0) {
-				if (node->children && (strlen(node->children->content) > 0)) {
+			} else if (xmlStrcmp(node->name, (const xmlChar*) "current") == 0) {
+				if (node->children && (strlen((const char*) node->children->content) > 0)) {
 					tmp = xmlStringDecodeEntities(parserctxt,
 						node->children->content, XML_SUBSTITUTE_BOTH, 0, 0, 0);
-					strcpy(password, tmp);
+					strcpy(password, (char*) tmp);
 					curr_len = strlen(password);
 					printf("INFO: Resuming cracking from password: '%s'\n", password);
 					xmlFree(tmp);
 				} else {
 					ret = 1;
 				}
-			} else if (xmlStrcmp(node->name, "good_password") == 0) {
-				if (node->children && (strlen(node->children->content) > 0)) {
+			} else if (xmlStrcmp(node->name, (const xmlChar*) "good_password") == 0) {
+				if (node->children && (strlen((const char*) node->children->content) > 0)) {
 					tmp = xmlStringDecodeEntities(parserctxt,
 						node->children->content, XML_SUBSTITUTE_BOTH, 0, 0, 0);
-					strcpy(password, tmp);
+					strcpy(password, (const char*) tmp);
 					curr_len = strlen(password);
 					xmlMutexLock(finishedMutex);
 					finished = 1;
@@ -145,11 +145,11 @@ int loadstatus() {
 		}
 		xmlFreeParserCtxt(parserctxt);
 	} else {
-		root = xmlNewNode(NULL, "rarcrack");
+		root = xmlNewNode(NULL, (const xmlChar*) "rarcrack");
 		xmlDocSetRootElement(status, root);
-		node = xmlNewTextChild(root, NULL, "abc", ABC);
-		node = xmlNewTextChild(root, NULL, "current", getfirstpassword());
-		node = xmlNewTextChild(root, NULL, "good_password", "");
+		node = xmlNewTextChild(root, NULL, (const xmlChar*) "abc", (const xmlChar*) ABC);
+		node = xmlNewTextChild(root, NULL, (const xmlChar*) "current", (const xmlChar*) getfirstpassword());
+		node = xmlNewTextChild(root, NULL, (const xmlChar*) "good_password", (const xmlChar*) "");
 		savestatus();
 	}
 	return ret;
@@ -200,6 +200,7 @@ void * status_thread() {
 		xmlMutexUnlock(pwdMutex);
 		savestatus();	//FIXME: this is wrong, when probing current password(s) is(are) not finished yet, and the program is exiting
 	}
+	return NULL;
 }
 
 void * crack_thread() {
@@ -233,6 +234,7 @@ void * crack_thread() {
 		xmlMutexUnlock(finishedMutex);
 		free(current);
 	}
+	return NULL;
 }
 
 void crack_start(unsigned int threads) {
@@ -292,7 +294,7 @@ void init(int argc, char **argv) {
 				}
 			} else if (strcmp(argv[i], "--type") == 0) {
 				if ((i + 1) < argc) {
-					sscanf(argv[++i], "%s", &test);
+					sscanf(argv[++i], "%s", test);
 					for (j = 0; strcmp(TYPE[j], "") != 0; j++) {
 						if (strcmp(TYPE[j], test) == 0) {
 							strcpy(finalcmd, CMD[j]);
