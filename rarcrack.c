@@ -56,16 +56,18 @@ inline void savestatus() {
 					tmp = xmlEncodeEntitiesReentrant(status, (const xmlChar*) &password);
 					xmlMutexUnlock(pwdMutex);
 					if (node->children) {
-						if (password[0] == '\0')
+						if (password[0] == '\0') {
 							xmlNodeSetContent(node->children, getfirstpassword());
-						else
+						} else {
 							xmlNodeSetContent(node->children, tmp);
+						}
 					}
 					xmlFree(tmp);
 				} else if ((finished == 1) && (xmlStrcmp(node->name,"good_password") == 0)) {
 					tmp =  xmlEncodeEntitiesReentrant(status, (const xmlChar*) &password_good);
-					if (node->children)
+					if (node->children) {
 						xmlNodeSetContent(node->children, tmp);
+					}
 					xmlFree(tmp);
 				}
 			}
@@ -78,8 +80,11 @@ inline void savestatus() {
 
 inline int abcnumb(char a) {
 	int i;
-	for (i = 0; i<ABCLEN; i++)
-		if (ABC[i] == a) return i;
+	for (i = 0; i<ABCLEN; i++) {
+		if (ABC[i] == a) {
+			return i;
+		}
+	}
 	return 0;
 }
 
@@ -95,10 +100,11 @@ int loadstatus() {
 		fclose(totest);
 		status = xmlParseFile(statname);
 	}
-	if (status != NULL)
+	if (status != NULL) {
 		root = xmlDocGetRootElement(status);
-	else
+	} else {
 		status = xmlNewDoc(NULL);
+	}
 	if (root != NULL) {
 		parserctxt = xmlNewParserCtxt();
 		for (node = root->children; node; node = node->next) {
@@ -106,8 +112,9 @@ int loadstatus() {
 				if (node->children && (strlen(node->children->content) > 0)) {
 					ABC = xmlStringDecodeEntities(parserctxt,
 						node->children->content,XML_SUBSTITUTE_BOTH,0,0,0);
-				} else
+				} else {
 					ret = 1;
+				}
 			} else if (xmlStrcmp(node->name, "current") == 0) {
 				if (node->children && (strlen(node->children->content) > 0)) {
 					tmp = xmlStringDecodeEntities(parserctxt,
@@ -116,8 +123,9 @@ int loadstatus() {
 					curr_len = strlen(password);
 					printf("INFO: Resuming cracking from password: '%s'\n",password);
 					xmlFree(tmp);
-				} else
+				} else {
 					ret = 1;
+				}
 			} else if (xmlStrcmp(node->name, "good_password") == 0) {
 				if (node->children && (strlen(node->children->content) > 0)) {
 					tmp = xmlStringDecodeEntities(parserctxt,
@@ -151,16 +159,18 @@ void nextpass2(char* p, unsigned int n) {
 	int i;
 	if (p[n] == ABC[ABCLEN-1]) {
 		p[n] = ABC[0];
-		if (n>0)
+		if (n>0) {
 			nextpass2(p, n-1);
-		else {
-			for (i=curr_len; i>=0; i--)
+		} else {
+			for (i=curr_len; i>=0; i--) {
 				p[i+1]=p[i];
+			}
 			p[0]=ABC[0];
 			p[++curr_len]='\0';
 		}
-	} else
+	} else {
 		p[n] = ABC[abcnumb(p[n])+1];
+	}
 	return;
 }
 
@@ -181,8 +191,9 @@ void * status_thread() {
 		xmlMutexLock(finishedMutex);
 		pwds = counter / status_sleep;
 		counter = 0;
-		if (finished != 0)
+		if (finished != 0) {
 			break;
+		}
 		xmlMutexUnlock(finishedMutex);
 		xmlMutexLock(pwdMutex);
 		printf("Probing: '%s' [%d pwds/sec]\n", password, pwds);
@@ -268,7 +279,9 @@ void init(int argc, char **argv) {
 			} else if (strcmp(argv[i],"--threads") == 0) {
 				if ((i + 1) < argc) {
 					sscanf(argv[++i], "%d", &threads);
-					if (threads < 1) threads = 1;
+					if (threads < 1) {
+						threads = 1;
+					}
 					if (threads > 12) {
 						printf("INFO: number of threads adjusted to 12\n");
 						threads = 12;
@@ -300,17 +313,20 @@ void init(int argc, char **argv) {
 			}
 		}
 	}
-	if (help == 1)
+	if (help == 1) {
 		return;
+	}
 	sprintf((char*)&statname,"%s.xml",(char*)&filename);
 	totest = fopen(filename,"r");
 	if (totest == NULL) {
 		printf("ERROR: The specified file (%s) is not exists or \n", filename);
 		printf("       you don't have a right permissions!\n");
 		return;
-	} else
+	} else {
 		fclose(totest);
-	if (finalcmd[0] == '\0') { //when we specify the file type, the programm will skip the test
+	}
+	if (finalcmd[0] == '\0') {
+		//when we specify the file type, the programm will skip the test
 		sprintf((char*)&test, CMD_DETECT, filename);
 		totest = popen(test,"r");
 		fscanf(totest,"%s",(char*)&test);
@@ -323,8 +339,9 @@ void init(int argc, char **argv) {
 			}
 		}
 		printf("INFO: detected file type: %s\n", TYPE[archive_type]);
-	} else
+	} else {
 		printf("INFO: the specified archive type: %s\n", TYPE[archive_type]);
+	}
 	if (finalcmd[0] == '\0') {
 		printf("ERROR: Couldn't detect archive type\n");
 		return;
@@ -336,8 +353,9 @@ void init(int argc, char **argv) {
 		return;
 	}
 	ABCLEN = strlen(ABC);
-	if (password[0] == '\0')
+	if (password[0] == '\0') {
 		password[0] = ABC[0];
+	}
 	crack_start(threads);
 	return;
 }
@@ -345,10 +363,12 @@ void init(int argc, char **argv) {
 int main(int argc, char *argv[]) {
 	printf("RarCrack! 0.2 by David Zoltan Kedves (kedazo@gmail.com)\n\n");
 	init(argc,argv);
-	if (ABC != (char*) &default_ABC)
+	if (ABC != (char*) &default_ABC) {
 		xmlFree(ABC);
-	if (status)
+	}
+	if (status) {
 		xmlFreeDoc(status);
+	}
 	xmlFreeMutex(pwdMutex);
 	xmlFreeMutex(finishedMutex);
 	return EXIT_SUCCESS;
