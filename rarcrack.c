@@ -234,16 +234,20 @@ void * crack_thread() {
 }
 
 void crack_start(unsigned int threads) {
-	pthread_t th[13];
+	pthread_t status_th;
+	pthread_t *th = malloc(sizeof(pthread_t)*threads);
+	printf("INFO: Starting %u threads\n", threads);
 	unsigned int i;
 	for (i = 0; i < threads; i++) {
 		(void) pthread_create(&th[i], NULL, crack_thread, NULL);
 	}
-	(void) pthread_create(&th[12], NULL, status_thread, NULL);
+	(void) pthread_create(&status_th, NULL, status_thread, NULL);
 	for (i = 0; i < threads; i++) {
 		(void) pthread_join(th[i], NULL);
 	}
-	(void) pthread_join(th[12], NULL);
+	// Wake sleeping status thread
+	kill(getpid(), SIGALRM);
+	(void) pthread_join(status_th, NULL);
 	return;
 }
 

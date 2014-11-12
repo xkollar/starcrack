@@ -31,6 +31,9 @@
 #include <libxml/threads.h>
 #include <pthread.h>	//POSIX threads
 
+#include <sys/wait.h>
+
+
 char default_ABC[] = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 const char CMD_DETECT[] = "file -i -b %s"; //this command return what is the file mime type
