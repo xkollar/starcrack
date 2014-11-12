@@ -135,7 +135,11 @@ int loadstatus() {
 					printf("GOOD: This archive was succesfully cracked\n");
 					printf("      The good password is: '%s'\n", password);
 					xmlFree(tmp);
-					ret = 1;
+					ret = 0;
+					exit(EXIT_SUCCESS);
+				} else if (node->children == NULL) {
+					// Workaround for optimizing parser
+					xmlAddChild(node, xmlNewText((const xmlChar*) ""));
 				}
 			}
 		}
