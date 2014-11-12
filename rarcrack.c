@@ -93,10 +93,7 @@ int loadstatus() {
 	xmlParserCtxtPtr parserctxt;
 	int ret = 0;
 	xmlChar* tmp;
-	FILE* totest;
-	totest = fopen(statname, "r");
-	if (totest != NULL) {
-		fclose(totest);
+	if (access(statname, R_OK | W_OK) != -1) {
 		status = xmlParseFile(statname);
 	}
 	if (status != NULL) {
@@ -318,13 +315,10 @@ void init(int argc, char **argv) {
 		return;
 	}
 	sprintf((char*)&statname, "%s.xml", (char*)&filename);
-	totest = fopen(filename, "r");
-	if (totest == NULL) {
-		printf("ERROR: The specified file (%s) is not exists or \n", filename);
-		printf("       you don't have a right permissions!\n");
+	if (access(filename, R_OK) == -1) {
+		printf("ERROR: The specified file (%s) does not exist or \n", filename);
+		printf("       you don't have sufficient permissions!\n");
 		return;
-	} else {
-		fclose(totest);
 	}
 	if (finalcmd[0] == '\0') {
 		//when we specify the file type, the programm will skip the test
