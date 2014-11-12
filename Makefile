@@ -6,7 +6,7 @@ BINARY=rarcrack
 all:${BINARY}
 
 ${BINARY}: ${BINARY}.c ${BINARY}.h
-	${CC} -std=c99 -Wall -Wextra -pthread rarcrack.c `xml2-config --libs --cflags` -O2 -o rarcrack
+	${CC} -std=c99 -Wall -Wextra -pedantic -pthread rarcrack.c `xml2-config --libs --cflags` -O2 -o rarcrack
 
 clean:
 	-rm *.o rarcrack
