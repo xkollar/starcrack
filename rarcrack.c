@@ -75,7 +75,6 @@ inline void savestatus() {
 		}
 		xmlSaveFormatFileEnc(statname, status, "UTF-8", 1);
 	}
-	return;
 }
 
 inline int abcnumb(char a) {
@@ -359,7 +358,6 @@ void init(int argc, char **argv) {
 		password[0] = ABC[0];
 	}
 	crack_start(threads);
-	return;
 }
 
 int main(int argc, char *argv[]) {
