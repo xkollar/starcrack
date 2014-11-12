@@ -36,7 +36,7 @@
 
 char default_ABC[] = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-const char CMD_DETECT[] = "file -i -b %s"; //this command return what is the file mime type
+const char CMD_DETECT[] = "file --mime-type -b %s"; // this command returns mime type for file
 
 const char* TYPE[] = {"rar",		"7z",		"zip", ""}; //the last "" signing this is end of the list
 const char* MIME[] = {"application/x-rar", "application/octet-stream", "application/x-zip", ""};
