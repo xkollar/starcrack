@@ -31,6 +31,7 @@
 #include <libxml/threads.h>
 #include <pthread.h>	//POSIX threads
 
+#include <fcntl.h>
 #include <sys/wait.h>
 
 

@@ -35,6 +35,33 @@ int finished = 0;
 xmlMutexPtr finishedMutex;
 char finalcmd[300] = {'\0', '\0'}; //this depending on arhive file type, it's a command to test file with password
 
+inline int checkpass(const char *pass, const char *filename) {
+	pid_t cpid, w;
+	int status;
+	char *empty_env[] = { NULL };
+	char passarg[PWD_LEN+2+1] = {'\0', '\0'};
+	int devnull;
+	cpid = fork();
+	if (cpid == 0) {
+		snprintf(passarg, PWD_LEN+2+1, "-p%s", pass);
+		devnull = open("/dev/null", O_WRONLY);
+		dup2(devnull, 1);
+		dup2(devnull, 2);
+		fclose(stdin);
+		execve("/usr/bin/unrar", (char * []) { "unrar", "t", passarg, (char*) filename, NULL }, empty_env);
+		perror("execve");
+		exit(EXIT_FAILURE);
+	}
+	do {
+		w = waitpid(cpid, &status, WUNTRACED | WCONTINUED);
+		if (w == -1) {
+			perror("waitpid");
+			exit(EXIT_FAILURE);
+		}
+	} while (!WIFEXITED(status) && !WIFSIGNALED(status));
+	return WEXITSTATUS(status) == EXIT_SUCCESS;
+}
+
 char * getfirstpassword() {
 	static char ret[2];
 	ret[0] = ABC[0];
@@ -47,9 +74,9 @@ inline void savestatus() {
 	xmlNodePtr node = NULL;
 	xmlChar* tmp = NULL;
 	if ((strlen(statname) > 0) && (status != NULL)) {
+		xmlMutexLock(finishedMutex);
 		root = xmlDocGetRootElement(status);
 		if (root) {
-			xmlMutexLock(finishedMutex);
 			for (node = root->children; node; node = node->next) {
 				if (xmlStrcmp(node->name, (const xmlChar*) "current") == 0) {
 					xmlMutexLock(pwdMutex);
@@ -71,9 +98,9 @@ inline void savestatus() {
 					xmlFree(tmp);
 				}
 			}
-			xmlMutexUnlock(finishedMutex);
 		}
 		xmlSaveFormatFileEnc(statname, status, "UTF-8", 1);
+		xmlMutexUnlock(finishedMutex);
 	}
 }
 
@@ -174,7 +201,7 @@ void nextpass2(char* p, unsigned int n) {
 	return;
 }
 
-inline char* nextpass() {	//IMPORTANT: the returned string must be freed
+inline char * nextpass() {	//IMPORTANT: the returned string must be freed
 	char *ok = malloc(sizeof(char)*(PWD_LEN+1));
 	xmlMutexLock(pwdMutex);
 	strcpy(ok, password);
@@ -205,36 +232,29 @@ static void * status_thread() {
 	return NULL;
 }
 
-void * crack_thread() {
+static void * crack_thread() {
 	char * current;
-	char ret[200];
-	char cmd[400];
-	FILE * Pipe;
+
 	while (1) {
 		current = nextpass();
-		sprintf((char*)&cmd, finalcmd, current, filename);
-		Pipe = popen(cmd, "r");
-		while (!feof(Pipe)) {
-			fgets((char*)&ret, 200, Pipe);
-			if (strcasestr(ret, "ok") != 0) {
-				strcpy(password_good, current);
-				xmlMutexLock(finishedMutex);
-				finished = 1;
-				printf("GOOD: password cracked: '%s'\n", current);
-				xmlMutexUnlock(finishedMutex);
-				savestatus();
-				break;
-			}
+
+		if (checkpass(current, filename)) {
+			strcpy(password_good, current);
+			xmlMutexLock(finishedMutex);
+			finished = 1;
+			printf("GOOD: password cracked: '%s'\n", current);
+			xmlMutexUnlock(finishedMutex);
+			savestatus();
 		}
-		pclose(Pipe);
+
 		xmlMutexLock(finishedMutex);
 		counter++;
+		free(current);
 		if (finished != 0) {
 			xmlMutexUnlock(finishedMutex);
 			break;
 		}
 		xmlMutexUnlock(finishedMutex);
-		free(current);
 	}
 	return NULL;
 }
@@ -264,9 +284,6 @@ void init(int argc, char **argv) {
 	int archive_type = -1;
 	FILE* totest;
 	char test[300];
-	xmlInitThreads();
-	pwdMutex = xmlNewMutex();
-	finishedMutex = xmlNewMutex();
 	if (argc == 1) {
 		printf("USAGE: rarcrack encrypted_archive.ext [--threads NUM] [--type rar|zip|7z]\n");
 		printf("       For more information please run \"rarcrack --help\"\n");
@@ -366,6 +383,9 @@ void init(int argc, char **argv) {
 
 int main(int argc, char *argv[]) {
 	printf("RarCrack! 0.2 by David Zoltan Kedves (kedazo@gmail.com)\n\n");
+	xmlInitThreads();
+	pwdMutex = xmlNewMutex();
+	finishedMutex = xmlNewMutex();
 	init(argc, argv);
 	if (ABC != (char*) &default_ABC) {
 		xmlFree(ABC);
