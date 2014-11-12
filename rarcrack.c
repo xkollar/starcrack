@@ -183,20 +183,22 @@ inline char* nextpass() {	//IMPORTANT: the returned string must be freed
 	return ok;
 }
 
-void * status_thread() {
-	int pwds;
-	const short status_sleep = 3;
+static void * status_thread() {
+	float pwds;
+	const short status_sleep = 7;
 	while(1) {
 		sleep(status_sleep);
 		xmlMutexLock(finishedMutex);
-		pwds = counter / status_sleep;
+		pwds = (float) counter / (float) status_sleep;
 		counter = 0;
 		if (finished != 0) {
+			xmlMutexUnlock(finishedMutex);
+			printf("Password found, exiting...\n");
 			break;
 		}
 		xmlMutexUnlock(finishedMutex);
 		xmlMutexLock(pwdMutex);
-		printf("Probing: '%s' [%d pwds/sec]\n", password, pwds);
+		printf("Probing: '%s' [%.2f pwds/sec]\n", password, pwds);
 		xmlMutexUnlock(pwdMutex);
 		savestatus();	//FIXME: this is wrong, when probing current password(s) is(are) not finished yet, and the program is exiting
 	}
