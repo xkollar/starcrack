@@ -272,7 +272,7 @@ void crack_start(unsigned int threads) {
 		(void) pthread_join(th[i], NULL);
 	}
 	// Wake sleeping status thread
-	kill(getpid(), SIGALRM);
+	raise(SIGALRM);
 	(void) pthread_join(status_th, NULL);
 	return;
 }
