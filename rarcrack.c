@@ -301,7 +301,7 @@ void init(int argc, char **argv) {
 			} else if (strcmp(argv[i], "--type") == 0) {
 				if ((i + 1) < argc) {
 					sscanf(argv[++i], "%s", test);
-					for (j = 0; strcmp(TYPE[j], "") != 0; j++) {
+					for (j = 0; TYPE[j] != NULL; j++) {
 						if (strcmp(TYPE[j], test) == 0) {
 							strcpy(finalcmd, CMD[j]);
 							archive_type = j;
@@ -336,7 +336,7 @@ void init(int argc, char **argv) {
 		totest = popen(test, "r");
 		fscanf(totest, "%s", (char*)&test);
 		pclose(totest);
-		for (i = 0; strcmp(MIME[i], "") != 0; i++) {
+		for (i = 0; MIME[i] != NULL; i++) {
 			if (strcmp(MIME[i], test) == 0) {
 				strcpy(finalcmd, CMD[i]);
 				archive_type = i;
