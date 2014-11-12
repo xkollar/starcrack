@@ -39,7 +39,7 @@ char * getfirstpassword() {
 	static char ret[2];
 	ret[0] = ABC[0];
 	ret[1] = '\0';
-	return (char*) &ret;
+	return ret;
 }
 
 inline void savestatus() {
