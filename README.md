@@ -44,22 +44,22 @@ make install
 ~~~~
 
 
-Using RarCrack
---------------
+Using RarCrack!
+---------------
 
 ~~~~ sh
 rarcrack your_encrypted_archive.ext [--threads thread_num] [--type rar|zip|7z]
 ~~~~
 
 
-Everything in [] is optional. By default rarcrack use two threads and
+Everything in [] is optional. By default RarCrack! use two threads and
 autodetect the archive type. If the detection does not work you can
-specify the correct file type with the type parameter. RarCrack currently
+specify the correct file type with the type parameter. RarCrack! currently
 crack maximum in 12 threads.
 
-After the cracking started RarCrack will print the current status
+After the cracking started RarCrack! will print the current status
 of cracking and save it's to a status file. If you want more specific
-password character set, you need to run RarCrack to create the XML status
+password character set, you need to run RarCrack! to create the XML status
 file (3 sec).
 
 ~~~~ xml
@@ -72,7 +72,7 @@ file (3 sec).
 ~~~~
 
 This is a sample XML file, and you see there is a character set. If you
-want, you can modify this file and when you start RarCrack again the
+want, you can modify this file and when you start RarCrack! again the
 program will be use new variables. Warning: Take care when you changing
 this file, make sure the current password don't have characters outside
 the abc[character set]!
