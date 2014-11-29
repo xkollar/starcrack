@@ -1,6 +1,6 @@
 /*
- *   Copyright (C) 2007 by David Zoltan Kedves
- *   kedazo@gmail.com
+ *   Copyright (C) 2014 by Matej Kollar
+ *   Copyright (C) 2007 by David Zoltan Kedves kedazo@gmail.com
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "rarcrack.h"
+#include "starcrack.h"
 
 char* ABC = (char*) &default_ABC;
 int ABCLEN;
@@ -172,7 +172,7 @@ int loadstatus() {
 		}
 		xmlFreeParserCtxt(parserctxt);
 	} else {
-		root = xmlNewNode(NULL, (const xmlChar*) "rarcrack");
+		root = xmlNewNode(NULL, (const xmlChar*) "starcrack");
 		xmlDocSetRootElement(status, root);
 		node = xmlNewTextChild(root, NULL, (const xmlChar*) "abc", (const xmlChar*) ABC);
 		node = xmlNewTextChild(root, NULL, (const xmlChar*) "current", (const xmlChar*) getfirstpassword());
@@ -285,20 +285,20 @@ void init(int argc, char **argv) {
 	FILE* totest;
 	char test[300];
 	if (argc == 1) {
-		printf("USAGE: rarcrack encrypted_archive.ext [--threads NUM] [--type rar|zip|7z]\n");
-		printf("       For more information please run \"rarcrack --help\"\n");
+		printf("USAGE: starcrack encrypted_archive.ext [--threads NUM] [--type rar|zip|7z]\n");
+		printf("       For more information please run \"starcrack --help\"\n");
 		help = 1;
 	} else {
 		for (i = 1; i < argc; i++) {
 			if (strcmp(argv[i], "--help") == 0) {
-				printf("Usage:   rarcrack encrypted_archive.ext [--threads NUM] [--type rar|zip|7z]\n\n");
+				printf("Usage:   starcrack encrypted_archive.ext [--threads NUM] [--type rar|zip|7z]\n\n");
 				printf("Options: --help: show this screen.\n");
 				printf("         --type: you can specify the archive program, this needed when\n");
 				printf("                 the program couldn't detect the proper file type\n");
 				printf("         --threads: you can specify how many threads\n");
 				printf("                    will be run, maximum 12 (default: 2)\n\n");
 				printf("Info:    This program supports only RAR, ZIP and 7Z encrypted archives.\n");
-				printf("         RarCrack! usually detects the archive type.\n\n");
+				printf("         StarCrack! usually detects the archive type.\n\n");
 				help = 1;
 				break;
 			} else if (strcmp(argv[i], "--threads") == 0) {
@@ -382,6 +382,7 @@ void init(int argc, char **argv) {
 }
 
 int main(int argc, char *argv[]) {
+	printf("StarCrack! 0.3 by Matej Kollar, based on\n");
 	printf("RarCrack! 0.2 by David Zoltan Kedves (kedazo@gmail.com)\n\n");
 	xmlInitThreads();
 	pwdMutex = xmlNewMutex();

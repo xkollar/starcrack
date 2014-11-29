@@ -1,11 +1,26 @@
-RarCrack!
-=========
+StarCrack!
+==========
 
-This program licensed under GPL 2.
+This program is licensed under GPL 2.
 
-If you forget your password for compressed archive (rar, 7z, zip), this program is the solution.
-This program uses bruteforce algorithm to find correct password. You can specify which characters will be used in password generations.
-Warning: Please don't use this program for any illegal things!
+This program is simple bruteforcing tool. You are more likely to
+achieve better performance if you use specialized program.
+For example [RarCrack! fork by hyc](https://github.com/hyc/rarcrack) use libunrar thus
+saving unnecessary execs. Or password cracking classic JohnTheRipper.
+
+Currently supporting only rar archives, however, I plan to add way to bruteforce
+anything that can have password specified at command line and announce its success
+via return code (with presets for rar, zip, and 7z).
+
+Pledge: This program is a toy... do not use toys for illegal purposes.
+
+Todo
+----
+
+* Remove libxml2 dependency.
+* Support wordlists.
+* Generalize tool to support anything that can have password
+  supplied on command line and exits with sane exit code.
 
 Changelog
 ---------
@@ -35,8 +50,8 @@ Building and installing
 Everything is very easy:
 
 ~~~~ sh
-tar -xjf rarcrack-VERSION.tar.bz2
-cd rarcrack-VERSION
+tar -xjf starcrack-VERSION.tar.bz2
+cd starcrack-VERSION
 #you need gcc or any C compiler (edit Makefile CC=YOUR_C_COMPILER)
 make
 #you must be root in next step:
@@ -44,36 +59,35 @@ make install
 ~~~~
 
 
-Using RarCrack!
----------------
+Using StarCrack!
+----------------
 
 ~~~~ sh
-rarcrack your_encrypted_archive.ext [--threads thread_num] [--type rar|zip|7z]
+starcrack your_encrypted_archive.ext [--threads thread_num] [--type rar|zip|7z]
 ~~~~
 
 
-Everything in [] is optional. By default RarCrack! use two threads and
+Everything in [] is optional. By default StarCrack! use two threads and
 autodetect the archive type. If the detection does not work you can
-specify the correct file type with the type parameter. RarCrack! currently
+specify the correct file type with the type parameter. StarCrack! currently
 crack maximum in 12 threads.
 
-After the cracking started RarCrack! will print the current status
+After the cracking started StarCrack! will print the current status
 of cracking and save it's to a status file. If you want more specific
-password character set, you need to run RarCrack! to create the XML status
+password character set, you need to run StarCrack! to create the XML status
 file (3 sec).
 
 ~~~~ xml
 <?xml version="1.0" encoding="UTF-8"?>
-<rarcrack>
+<starcrack>
  <abc>0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</abc>
  <current>uU</current>
  <good_password></good_password>
-</rarcrack>
+</starcrack>
 ~~~~
 
 This is a sample XML file, and you see there is a character set. If you
-want, you can modify this file and when you start RarCrack! again the
+want, you can modify this file and when you start StarCrack! again the
 program will be use new variables. Warning: Take care when you changing
 this file, make sure the current password don't have characters outside
 the abc[character set]!
-
