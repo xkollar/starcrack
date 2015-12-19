@@ -29,7 +29,7 @@
 #include <libxml/parserInternals.h>
 #include <libxml/tree.h>
 #include <libxml/threads.h>
-#include <pthread.h>	//POSIX threads
+#include <pthread.h> //POSIX threads
 
 #include <fcntl.h>
 #include <sys/wait.h>
@@ -39,7 +39,7 @@ char default_ABC[] = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUV
 
 const char CMD_DETECT[] = "file --mime-type -b %s"; // this command returns mime type for file
 
-const char* TYPE[] = {"rar", "7z", "zip", NULL}; //the last "" signing this is end of the list
+const char* TYPE[] = {"rar", "7z", "zip", NULL}; // the last "" signals the end of the list
 const char* MIME[] = {"application/x-rar", "application/octet-stream", "application/x-zip", NULL};
 const char* CMD[] = {"unrar t -y -p%s %s 2>&1", "7z t -y -p%s %s 2>&1", "unzip -P%s -t %s 2>&1", NULL};
 
