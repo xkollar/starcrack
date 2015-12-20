@@ -23,17 +23,17 @@
 char* ABC = (char*) &default_ABC;
 int ABCLEN;
 
-char password[PWD_LEN+1] = {'\0', '\0'}; //this contains the actual password
-char password_good[PWD_LEN+1] = {'\0', '\0'};  //this changed only once, when we found the good passord
-unsigned int curr_len = 1; //current password length
-long counter = 0;	//this couning probed passwords
-xmlMutexPtr pwdMutex;	//mutex for password char array
-char filename[255];	//the archive file name
-char statname[259];	//status xml file name filename + ".xml"
+char password[PWD_LEN+1] = {'\0', '\0'}; // currently tested password
+char password_good[PWD_LEN+1] = {'\0', '\0'};  // working (good) password, this changes only once
+unsigned int curr_len = 1; // current password length
+long counter = 0; // number of passwords probed between two status checks
+xmlMutexPtr pwdMutex; // mutex for password char array
+char filename[255]; // the archive file name
+char statname[259]; // status xml file name filename + ".xml"
 xmlDocPtr status;
 int finished = 0;
 xmlMutexPtr finishedMutex;
-char finalcmd[300] = {'\0', '\0'}; //this depending on arhive file type, it's a command to test file with password
+char finalcmd[300] = {'\0', '\0'}; // this depending on arhive file type, it's a command to test file with password
 
 inline int checkpass(const char *pass, const char *filename) {
 	pid_t cpid, w;
@@ -201,7 +201,7 @@ void nextpass2(char* p, unsigned int n) {
 	return;
 }
 
-inline char * nextpass() {	//IMPORTANT: the returned string must be freed
+inline char * nextpass() { // IMPORTANT: the returned string must be freed
 	char *ok = malloc(sizeof(char)*(PWD_LEN+1));
 	xmlMutexLock(pwdMutex);
 	strcpy(ok, password);
@@ -227,7 +227,7 @@ static void * status_thread() {
 		xmlMutexLock(pwdMutex);
 		printf("Probing: '%s' [%.2f pwds/sec]\n", password, pwds);
 		xmlMutexUnlock(pwdMutex);
-		savestatus();	//FIXME: this is wrong, when probing current password(s) is(are) not finished yet, and the program is exiting
+		savestatus(); // FIXME: this is wrong, when probing current password(s) is(are) not finished yet, and the program is exiting
 	}
 	return NULL;
 }
