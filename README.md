@@ -21,6 +21,7 @@ Todo
 * Support wordlists.
 * Generalize tool to support anything that can have password
   supplied on command line and exits with sane exit code.
+* Probably rewire from the scratch with code reuse.
 
 Changelog
 ---------
