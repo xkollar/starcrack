@@ -33,6 +33,8 @@
 
 #include <fcntl.h>
 #include <sys/wait.h>
+#include <linux/wait.h>
+#include <signal.h>
 
 
 char default_ABC[] = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
